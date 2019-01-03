@@ -65,7 +65,7 @@ key_prefix "foo/" {
 key_prefix "foo/private/" {
   policy = "deny"
 }
-
+# Or for exact key matches
 key "foo/bar/secret" {
   policy = "deny"
 }
