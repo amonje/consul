@@ -182,7 +182,7 @@ agent_prefix "" {
 }
 ```
 
-Agent rules are keyed by the node name they apply to, using the longest prefix match rule. In
+Agent rules are keyed by the node name they apply to. In
 the example above, the rules allow read-only access to any node name with the empty prefix, allow
 read-write access to any node name that starts with "foo", and deny all access to any node name that
 starts with "bar".
