@@ -177,7 +177,7 @@ agent "bar" {
   policy = "deny"
 }
 
-agent_prefix"" {
+agent_prefix "" {
   policy = "read"
 }
 ```
