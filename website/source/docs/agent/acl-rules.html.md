@@ -10,6 +10,10 @@ description: |-
 
 # ACL Rules
 
+Consul provides an optional Access Control List (ACL) system which can be used 
+to control access to data and APIs. To learn more about Consul's ACL review the
+[ACL system documentation](/docs/agent/acl-system.html)
+
 A core part of the ACL system is the rule language, which is used to describe the policy
 that must be enforced. There are two types of rules: prefix based rules and exact matching
 rules. 
@@ -89,7 +93,7 @@ This is equivalent to the following JSON input:
     "foo/bar/secret" : {
       "policy" : "deny"
     }
-  }
+  },
   "operator": "read"
 }
 ```

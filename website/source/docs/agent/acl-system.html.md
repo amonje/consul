@@ -191,5 +191,5 @@ The `service_prefix` policy needs read access for any services that can be regis
 
 ## Next Steps
 
-Bootstrap ACLs with the [this guide](/docs/guides/acl.html) or contine reading about
-[ACL rules](/docs/agent/acl-rules.html)
+Setup ACLs with the [Boostrapping guide](/docs/guides/acl.html) or continue reading about
+[ACL rules](/docs/agent/acl-rules.html).
