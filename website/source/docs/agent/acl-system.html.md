@@ -28,7 +28,7 @@ At the highest level, there are two major components to the ACL system:
  make requests to Consul.
 
  ACL tokens and policies are managed by Consul operators via Consul's
-[ACL API](/api/acl/acl.html), ACL CLI, or systems like
+[ACL API](/api/acl/acl.html), [ACL CLI](/docs/commands/acl.html), or systems like
 [HashiCorp's Vault](https://www.vaultproject.io/docs/secrets/consul/index.html).
 
 ### ACL Policies
@@ -75,8 +75,8 @@ set to the value of the configuration entry.
 
 The token Secret ID is passed along with each RPC request to the servers. Consul's
 [HTTP endpoints](/api/index.html) can accept tokens via the `token`
-query string parameter, the `X-Consul-Token` request header, or Authorization Bearer
-token [RFC6750](https://tools.ietf.org/html/rfc6750). Consul's
+query string parameter, the `X-Consul-Token` request header, or an 
+[RFC6750](https://tools.ietf.org/html/rfc6750) authorization bearer token. Consul's
 [CLI commands](/docs/commands/index.html) can accept tokens via the
 `token` argument, or the `CONSUL_HTTP_TOKEN` environment variable.
 
@@ -122,7 +122,7 @@ of any state.
 [Catalog API](/api/catalog.html#list-datacenters) similarly exposes the names of known
 Consul datacenters, and does not allow modification of any state.
 
-3. The [connect CA roots endpoint](/api/connect/ca.html#list-ca-root-certificates) exposes just the public TLS certificate which other systems can used to verify the TLS connection with Consul.
+3. The [connect CA roots endpoint](/api/connect/ca.html#list-ca-root-certificates) exposes just the public TLS certificate which other systems can use to verify the TLS connection with Consul.
 
 Constructing rules from these policies is covered in detail in the
 [Rule Specification](#rule-specification) section below.

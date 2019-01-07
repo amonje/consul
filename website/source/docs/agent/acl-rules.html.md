@@ -138,10 +138,9 @@ On success, the Policy is returned:
 }
 ```
 
-This token ID can then be passed into Consul's HTTP APIs via the `token`
-query string parameter, or the `X-Consul-Token` request header, or Authorization
-Bearer token header, or Consul's CLI commands via the `token` argument,
-or the `CONSUL_HTTP_TOKEN` environment variable.
+The created policy can now be specified either by name or by ID when 
+[creating a token](/docs/guides/acl.html). This will grant the rules
+provided to the [bearer of that token](https://www.consul.io/api/index.html#authentication).
 
 #### ACL Rules
 
@@ -167,25 +166,21 @@ and [`service` or `service_prefix`](#service-rules) policies instead.
 Agent rules look like this:
 
 ```text
-agent "" {
+agent_prefix "" {
   policy = "read"
 }
 agent "foo" {
   policy = "write"
 }
-agent "bar" {
+agent_prefix "bar" {
   policy = "deny"
-}
-
-agent_prefix "" {
-  policy = "read"
 }
 ```
 
-Agent rules are keyed by the node name they apply to. In
-the example above, the rules allow read-only access to any node name with the empty prefix, allow
-read-write access to any node name that starts with "foo", and deny all access to any node name that
-starts with "bar".
+Agent rules are keyed by the node name they apply to. In the example above the rules
+allow read-only access to any node name by using the empty prefix, read-write access to 
+the node with the _exact_ name `foo`, and denies all access to any noe name that starts
+with `bar`. 
 
 Since [Agent API](/api/agent.html) utility operations may be reqired before an agent is joined to
 a cluster, or during an outage of the Consul servers or ACL datacenter, a special token may be
