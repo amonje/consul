@@ -17,7 +17,7 @@ To complete this guide, you should have an operational Consul 1.4+ cluster. We a
 Bootstrapping the ACL system is a multi-step process, we will cover all the necessary steps in this guide. 
 
 * Enable ACLs on all the servers.
-* Create the initial bootstrap token and apply the master token to all the servers.
+* Create the initial bootstrap token.
 * Create the agent policy.
 * Create the agent token and apply it to the servers. 
 * Enable ACLs on the clients and apply the agent token.
@@ -59,7 +59,10 @@ Note, now that we have enabled ACLs, we will need a token to complete any operat
 
 ## Step 2: Create the Bootstrap Token
 
-Once ACLs have been enabled we can bootstrap our first token, the master token. We will use it in the server configuration file as the [`master`](https://www.consul.io/docs/agent/options.html#acl_tokens_master) token.
+Once ACLs have been enabled we can bootstrap our first token, the bootstrap token. 
+The bootstrap token is a management token with unrestricted privileges. It will
+be shared with all the servers in the quorum, since it will be added to the 
+state store. 
 
 ```bash
 $ consul acl bootstrap
@@ -72,43 +75,16 @@ Policies:
 00000000-0000-0000-0000-000000000001 - global-management
 ```
 
-On the server where the `bootstrap` command was issued we should see the following message. 
+On the server where the `bootstrap` command was issued we should see the following log message. 
 
 ```sh
 2018/12/11 15:30:23 [INFO] consul.acl: ACL bootstrap completed
 2018/12/11 15:30:23 [DEBUG] http: Request PUT /v1/acl/bootstrap (2.347965ms) from=127.0.0.1:40566
 ```
 
-Note, the bootstrap token can only be created once, bootstrapping will be disabled after the master token was created. 
-
-Once the ACL system is bootstrapped, ACL tokens can be managed through the
-[ACL API](/api/acl/acl.html).
-
-## Step 3: Add the Bootstrap Token to all the Servers 
-
-Next, we can use the same `SecretID` value from the bootstrap output as the master token in all the server's configuration file. 
-
-```json
-{
-  "acl" : {
-    "enabled": true,
-    "default_policy": "deny",
-    "down_policy": "extend-cache",
-    "tokens" : {
-      "master" : "4411f091-a4c9-48e6-0884-1fcb092da1c8"
-    }
-}
-```
-
-After adding the token to the configuration file restart Consul to apply the changes. Note, the agent must be restarted to apply the changes, in this case a `reload` of Consul will not be effective. 
-
-At this point we should no longer see the coordinate warning in the servers logs, we should continue to see that the node information is in sync.
-
-```sh
-2018/12/11 15:34:20 [DEBUG] agent: Node info in sync
-```
-
-This process should be repeated on every server within the cluster, one at a time. To check that the servers are alive and part of the cluster you can continually to check the member status.
+Since ACLs have been enabled, we will need it to complete any additional operations.
+An example is checking the memeber list, which is also a good troubleshooting methond
+for ensuring the process is working correclty: 
 
 ```sh
 $ consul members -token "4411f091-a4c9-48e6-0884-1fcb092da1c8"
@@ -118,8 +94,13 @@ bear    172.20.20.11:8301  alive  server  1.4.0  2         kc  <all>
 wolf    172.20.20.12:8301  alive   server  1.4.0  2         kc  <all>
 ```
 
-## Step 4: Create an Agent Token Policy
+The bootstrap token can also be used in the server configuration file as 
+the [`master`](https://www.consul.io/docs/agent/options.html#acl_tokens_master) token.
 
+Note, the bootstrap token can only be created once, bootstrapping will be disabled after the master token was created. Once the ACL system is bootstrapped, ACL tokens can be managed through the
+[ACL API](/api/acl/acl.html).
+
+## Step 3: Create an Agent Token Policy
 
 Before we can create a token, we will need to create its associated policy. A policy is a set of rules that can used to specify granular permissions. To learn more about rules, read the ACL rule specification [documentation](/docs/agent/acl-rules.html).
 
@@ -153,8 +134,7 @@ service_prefix "" {
 
 The returned value is the newly-created policy that we can now use when creating our agent token. 
 
-## Step 5: Create an Agent Token
-
+## Step 4: Create an Agent Token
 
 Using the newly created policy, we can create an agent token. Again we can complete this process on any of the servers. For this guide, all agents will share the same token. Note, the `SecretID` is the token used to authenticate API and CLI commands. 
 
@@ -169,8 +149,7 @@ Policies:
    fcd68580-c566-2bd2-891f-336eadc02357 - agent-token
 ```
 
-
-Step 6: Add the Agent Token to all the Servers
+## Step 5: Add the Agent Token to all the Servers
 
 Our final step is to assign the token to all of our Consul servers via the configuration file restart Consul one last time.
 
@@ -189,7 +168,13 @@ Our final step is to assign the token to all of our Consul servers via the confi
 }
 ```
 
-## Step 7: Ensure the ACL System is Configured Properly
+At this point we should no longer see the coordinate warning in the servers logs, however, we should continue to see that the node information is in sync.
+
+```sh
+2018/12/11 15:34:20 [DEBUG] agent: Node info in sync
+```
+
+## Step 6: Ensure the ACL System is Configured Properly
 
 Before configuring the clients, we should check that the servers are healthy. To do this, let’s view the catalog.
 

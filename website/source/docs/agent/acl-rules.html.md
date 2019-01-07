@@ -46,6 +46,8 @@ When using prefix-based rules, the most specific prefix match determines the act
 allows for flexible rules like an empty prefix to allow read-only access to all
 resources, along with some specific prefixes that allow write access or that are
 denied all access. Exact matching rules will only apply to the exact resource specified.
+The order of precedence for matching rules are, DENY has priority over WRITE or READ and 
+ WRITE has priority over READ.  
 
 We make use of the
 [HashiCorp Configuration Language (HCL)](https://github.com/hashicorp/hcl/) to specify
